@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine 💘</title>
+
+  <style>
+    :root{
+      --bg:#e9c3d4;
+      --card:#ffffffcc;
+      --text:#111;
+      --yes1:#ff4b6e;
+      --yes2:#c81e44;
+      --stroke:#d7d7d7;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+      --radius: 22px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      overflow:hidden;
+      padding: 24px;
+    }
+
+    .card{
+      width:min(880px, 92vw);
+      padding:38px 34px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      text-align:center;
+      position:relative;
+    }
+
+    h1{
+      margin:0 0 20px;
+      font-size: clamp(24px, 3.5vw, 44px);
+      font-weight: 800;
+    }
+
+    .buttons{
+      margin-top:22px;
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+      position:relative;
+      min-height:64px;
+    }
+
+    button{
+      border:0;
+      border-radius:10px;
+      padding:14px 34px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+      user-select:none;
+    }
+
+    button:active{
+      transform: translateY(1px) scale(.99);
+    }
+
+    .yes{
+      color:white;
+      background: linear-gradient(180deg, var(--yes1), var(--yes2));
+      box-shadow: 0 14px 30px rgba(200,30,68,.25);
+    }
+
+    .yes:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .no{
+      background:#f6f6f6;
+      border:1px solid var(--stroke);
+      color:#333;
+      box-shadow:0 10px 24px rgba(0,0,0,.10);
+      position:relative;
+    }
+
+    .no:hover{
+      transform: translateY(-1px);
+    }
+
+    /* Hint (like the reference) */
+    .hint{
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: .75;
+    }
+
+    /* Floating hearts */
+    .hearts{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+    .heart{
+      position:absolute;
+      font-size:18px;
+      opacity:0;
+      transform: translateY(30px);
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 10px 18px rgba(255,75,110,.18));
+    }
+
+    @keyframes floatUp{
+      0%{ opacity:0; transform: translateY(30px) scale(.95); }
+      12%{ opacity:.75; }
+      100%{ opacity:0; transform: translateY(-120vh) scale(1.25); }
+    }
+
+    /* Fake loading screen */
+    .loading{
+      display:none;
+      width:min(720px, 92vw);
+      text-align:center;
+    }
+    .loaderWrap{
+      width:min(520px, 92vw);
+      margin: 0 auto;
+      background: rgba(255,255,255,.65);
+      border:1px solid rgba(0,0,0,.07);
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.14);
+    }
+    .spinner{
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 5px solid rgba(200,30,68,.18);
+      border-top-color: rgba(200,30,68,.85);
+      margin: 4px auto 10px;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loadingTitle{
+      font-weight: 900;
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+    .loadingText{
+      margin: 0;
+      font-weight: 700;
+      opacity: .85;
+      font-size: 14px;
+    }
+
+    /* Success screen */
+    .success{
+      display:none;
+      width:min(720px, 92vw);
+      text-align:center;
+    }
+
+    .yay{
+      font-size: clamp(44px, 6vw, 70px);
+      font-weight:900;
+      margin:0 0 10px;
+    }
+
+    .sub{
+      font-size: clamp(18px, 2.6vw, 26px);
+      margin:0 0 20px;
+      font-weight:600;
+      opacity:.92;
+    }
+
+    .gifbox{
+      width:min(520px, 90vw);
+      margin:0 auto 18px;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 18px 50px rgba(0,0,0,.18);
+      background:#fff;
+      padding:10px;
+    }
+
+    .love{
+      font-size:22px;
+      font-weight:700;
+      margin:0;
+    }
+
+    .screenshot{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:800;
+      opacity:.8;
+    }
+
+    /* Confetti canvas overlay */
+    canvas#confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hearts" id="hearts"></div>
+  <canvas id="confetti"></canvas>
+
+  <!-- Screen 1 -->
+  <div class="card" id="askCard">
+    <h1>Harshita,<br>will you be my Valentine? 💕</h1>
+
+    <div class="buttons">
+      <button class="yes" id="yesBtn">YES</button>
+      <button class="no" id="noBtn">NO</button>
+    </div>
+
+    <p class="hint" id="hint">Hint: “NO” is… non-deterministic 😅</p>
+  </div>
+
+  <!-- Fake Loading Screen -->
+  <div class="loading" id="loading">
+    <div class="loaderWrap">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loadingTitle">Processing your answer… 💌</p>
+      <p class="loadingText" id="loadingText">Verifying cuteness…</p>
+    </div>
+  </div>
+
+  <!-- Screen 2 -->
+  <div class="success" id="success">
+    <p class="yay">💖 YAY!!! 💖</p>
+    <p class="sub">Best decision ever 😘</p>
+
+    <div class="gifbox">
+      <!-- Tenor GIF embed -->
+      <div class="tenor-gif-embed"
+        data-postid="15410005780506284769"
+        data-share-method="host"
+        data-aspect-ratio="1.21463"
+        data-width="100%">
+        <a href="https://tenor.com/view/the-office-michael-scott-the-office-memes-michael-neuvifuri-gif-15410005780506284769">
+          The Office Michael Scott GIF
+        </a>
+      </div>
+    </div>
+
+    <p class="love">I love you ❤️</p>
+    <p class="screenshot">📸 Screenshot &amp; send me ❤️</p>
+  </div>
+
+  <script async src="https://tenor.com/embed.js"></script>
+
+  <script>
+    const askCard = document.getElementById("askCard");
+    const loading = document.getElementById("loading");
+    const success = document.getElementById("success");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const hintEl = document.getElementById("hint");
+    const hearts = document.getElementById("hearts");
+    const loadingText = document.getElementById("loadingText");
+
+    // --- Sound on YES (small synth "success" beep; no files needed) ---
+    function playYesSound(){
+      try{
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = 880;
+        g.gain.value = 0.0001;
+
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start();
+
+        const now = ctx.currentTime;
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+        o.frequency.exponentialRampToValueAtTime(1320, now + 0.10);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+
+        setTimeout(() => { o.stop(); ctx.close(); }, 260);
+      }catch(e){
+        // ignore if blocked
+      }
+    }
+
+    // --- Floating hearts ---
+    function spawnHeart(){
+      const el = document.createElement("div");
+      el.className = "heart";
+      el.textContent = Math.random() > 0.5 ? "💖" : "💘";
+      el.style.left = (Math.random()*100) + "vw";
+      el.style.bottom = "-30px";
+      el.style.fontSize = (14 + Math.random()*18) + "px";
+      const dur = 5 + Math.random()*6;
+      el.style.animationDuration = dur + "s";
+      el.style.animationDelay = (Math.random()*0.5) + "s";
+      hearts.appendChild(el);
+      requestAnimationFrame(()=>{ el.style.opacity = "1"; });
+      setTimeout(()=>el.remove(), (dur+1)*1000);
+    }
+    setInterval(spawnHeart, 380);
+
+    // --- NO button: EXACT behavior from reference (move on hover/click + hints) ---
+    function moveNo(){
+      const pad = 18;
+      const rect = noBtn.getBoundingClientRect();
+
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+      const maxX = vw - rect.width - pad;
+      const maxY = vh - rect.height - pad;
+
+      const x = pad + Math.random() * maxX;
+      const y = pad + Math.random() * maxY;
+
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    }
+
+    let noCount = 0;
+    noBtn.addEventListener("mouseenter", () => {
+      noCount++;
+      moveNo();
+
+      const hints = [
+        "Hint: the ‘NO’ endpoint is rate-limited 😅",
+        "Hint: that button is in escape mode 🏃‍♀️💨",
+        "Hint: pretty sure YES is the right choice 👇",
+        "Hint: ‘NO’ keeps throwing 404 errors ❌"
+      ];
+      hintEl.textContent = hints[Math.min(noCount - 1, hints.length - 1)];
+    });
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNo();
+    });
+
+    // --- Confetti burst (canvas) ---
+    const canvas = document.getElementById("confetti");
+    const cctx = canvas.getContext("2d");
+    let confettiPieces = [];
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      cctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function confettiBurst(){
+      canvas.style.display = "block";
+      confettiPieces = [];
+      const count = 180;
+
+      for(let i=0;i<count;i++){
+        confettiPieces.push({
+          x: window.innerWidth/2 + (Math.random()*80 - 40),
+          y: window.innerHeight/3 + (Math.random()*40 - 20),
+          vx: (Math.random()*10 - 5),
+          vy: (Math.random()*-10 - 6),
+          g: 0.28 + Math.random()*0.12,
+          w: 6 + Math.random()*6,
+          h: 8 + Math.random()*10,
+          r: Math.random()*Math.PI,
+          vr: (Math.random()*0.2 - 0.1),
+          a: 1
+        });
+      }
+
+      const start = performance.now();
+
+      function tick(t){
+        cctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+        confettiPieces.forEach(p=>{
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.r += p.vr;
+          p.a *= 0.992;
+
+          cctx.save();
+          cctx.globalAlpha = Math.max(0, Math.min(1, p.a));
+          cctx.translate(p.x, p.y);
+          cctx.rotate(p.r);
+
+          const hue = (Math.random()*360)|0;
+          cctx.fillStyle = `hsl(${hue} 90% 60%)`;
+          cctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+          cctx.restore();
+        });
+
+        if(t - start < 2200){
+          requestAnimationFrame(tick);
+        } else {
+          canvas.style.display = "none";
+          cctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // --- YES flow: sound -> fake loading -> success + hearts burst + confetti ---
+    yesBtn.addEventListener("click", () => {
+      playYesSound();
+
+      askCard.style.display = "none";
+      loading.style.display = "block";
+
+      const messages = [
+        "Verifying cuteness…",
+        "Checking compatibility… 100% ✅",
+        "Deploying butterflies… 🦋",
+        "Finalizing: YAY mode…"
+      ];
+      let idx = 0;
+      loadingText.textContent = messages[idx];
+
+      const msgTimer = setInterval(() => {
+        idx = Math.min(idx + 1, messages.length - 1);
+        loadingText.textContent = messages[idx];
+      }, 550);
+
+      setTimeout(() => {
+        clearInterval(msgTimer);
+        loading.style.display = "none";
+        success.style.display = "block";
+
+        for(let i=0;i<24;i++) setTimeout(spawnHeart, i*60);
+        confettiBurst();
+      }, 1900);
+    });
+  </script>
+</body>
+</html>
